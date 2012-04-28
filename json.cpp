@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <exception>
 #include <iostream>
@@ -144,19 +145,20 @@ json_object* parse::object() {
   json_string* k;
   json_value* v;
 
-  while(1) {
-    while(isspace(ch=in.get()));
-    if(ch=='}') break;
-    else if(ch=='"') k=parse::string();
-    else throw json_exception();
-    while(isspace(ch=in.get()));
-    if(ch!=':') throw json_exception();
-    v=parse::value();
-    obj->insert(k, v);
-    while(isspace(ch=in.get()));
-    if(ch==',')  ;
-    else if(ch=='}') break;
-    else throw json_exception();
+  while(isspace(ch=in.get()));
+  if(ch!='}') {
+    while(1) {
+      if(ch=='"') k=parse::string();
+      else throw json_exception();
+      while(isspace(ch=in.get()));
+      if(ch!=':') throw json_exception();
+      v=parse::value();
+      obj->insert(k, v);
+      while(isspace(ch=in.get()));
+      if(ch==',') while(isspace(ch=in.get()));
+      else if(ch=='}') break;
+      else throw json_exception();
+    }
   }
   return obj;
 }
@@ -165,15 +167,16 @@ json_array* parse::array() {
   char ch;
   json_array* jarray=new json_array();
 
-  while(1) {
-    while(isspace(ch=in.get()));
-    if(ch==']') break;
-    else in.unget();
-    jarray->insert(parse::value());
-    while(isspace(ch=in.get()));
-    if(ch==',');
-    else if(ch==']') break;
-    else throw json_exception();
+  while(isspace(ch=in.get()));
+  if(ch!=']') {
+    in.unget();
+    while(1) {
+      jarray->insert(parse::value());
+      while(isspace(ch=in.get()));
+      if(ch==',');
+      else if(ch==']') break;
+      else throw json_exception();
+    }
   }
   return jarray;
 }
