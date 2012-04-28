@@ -17,9 +17,15 @@ int main(void) {
   parse p4(x4);
   istrstream x5("\"ab\naaa\"");
   parse p5(x5);
+  istrstream x6("[]");
+  parse p6(x6);
+  istrstream x7("{}");
+  parse p7(x7);
   cout<<p1.value()<<endl;
   cout<<p2.value()<<endl;
   cout<<p3.value()<<endl;
   cout<<p4.value()<<endl;
   cout<<p5.value()<<endl;
+  cout<<p6.value()<<endl;
+  cout<<p7.value()<<endl;
 }
