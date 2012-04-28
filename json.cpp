@@ -26,7 +26,7 @@ json_string::~json_string() {
 
 ostream& json_string::write(ostream& os) const {
   os<<'"';
-  for(string::iterator iter=str->begin(); iter!=str->end(); ++iter) {
+  for(string::const_iterator iter=str->begin(); iter!=str->end(); ++iter) {
     switch(*iter) {
     case '"' : os<<"\\\""; break;
     case '\\': os<<"\\\\"; break;
@@ -47,24 +47,19 @@ std::ostream& operator<<(std::ostream& os, const json_value* value) {
   return value->write(os);
 }
   
-json_array::json_array()
-  : arr(new value_type) {
+json_array::json_array(const value_type* arr)
+  : arr(arr) {
 }
 
 json_array::~json_array() {
-  for(value_type::iterator iter=arr->begin(); iter!=arr->end(); ++iter)
+  for(value_type::const_iterator iter=arr->begin(); iter!=arr->end(); ++iter)
     delete *iter;
   delete arr;
 }
 
-json_array& json_array::insert(json_value* x) {
-  arr->push_back(x);
-  return *this;
-}
-
 ostream& json_array::write(ostream& os) const {
   cout<<'[';
-  for(value_type::iterator iter=arr->begin(); iter != arr->end();) {
+  for(value_type::const_iterator iter=arr->begin(); iter != arr->end();) {
     (*iter)->write(os);
     ++iter;
     if(iter!=arr->end()) os <<',';
@@ -72,12 +67,12 @@ ostream& json_array::write(ostream& os) const {
   os<<']';
 }
 
-json_object::json_object()
-  : obj(new value_type) {
+json_object::json_object(value_type* obj)
+  : obj(obj) {
 }
 
 json_object::~json_object() {
-  for(value_type::iterator iter=obj->begin(); iter!=obj->end(); ++iter) {
+  for(value_type::const_iterator iter=obj->begin(); iter!=obj->end(); ++iter) {
     delete iter->first;
     delete iter->second;
   }
@@ -86,7 +81,7 @@ json_object::~json_object() {
 
 ostream& json_object::write(ostream& os) const {
   os<<'{';
-  for(value_type::iterator iter=obj->begin(); iter!=obj->end();) {
+  for(value_type::const_iterator iter=obj->begin(); iter!=obj->end();) {
     os << iter->first <<':' << iter->second;
     ++iter;
     if(iter!=obj->end()) os <<',';
@@ -94,12 +89,7 @@ ostream& json_object::write(ostream& os) const {
   os<<'}';
 }
 
-json_object& json_object::insert(json_string* k, json_value* v) {
-  obj->insert(map<json_string*, json_value*>::value_type(k, v));
-  return *this;
-}
-
-json_bool::json_bool(bool x) : val(x) {
+json_bool::json_bool(const bool x) : val(x) {
 }
 
 ostream& json_bool::write(ostream& os) const {
@@ -107,7 +97,7 @@ ostream& json_bool::write(ostream& os) const {
   return os;
 }
 
-json_number::json_number(double number)
+json_number::json_number(const double number)
   : number(number) {
 }
 

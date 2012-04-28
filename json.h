@@ -11,7 +11,7 @@ public:
 
 class json_string :public json_value {
 private:
-  std::string *str;
+  const std::string *str;
 public:
   json_string(std::string* x);
   ~json_string();
@@ -22,20 +22,19 @@ class json_array :public json_value {
 public:
   typedef std::vector<json_value*> value_type;
 private:
-  json_array::value_type *arr;
+  const json_array::value_type *arr;
 public:
-  json_array();
+  json_array(const value_type* x);
   ~json_array();
-  json_array& insert(json_value* x);
   std::ostream& write(std::ostream& os) const;
 };
 
     
 class json_number :public json_value {
 private:
-  double number;
+  const double number;
 public:
-  json_number(double number);
+  json_number(const double number);
   std::ostream& write(std::ostream& os) const;
 };
 
@@ -43,11 +42,10 @@ class json_object :public json_value {
 public:
   typedef std::map<json_string*, json_value*> value_type;
 private:
-   value_type *obj;
+  const value_type *obj;
 public:
-  json_object();
+  json_object(value_type* obj);
   ~json_object();
-  json_object& insert(json_string* k, json_value* v);
   std::ostream& write(std::ostream& os) const;
 };
 
@@ -55,9 +53,9 @@ class json_null :public json_value {
 };
 
 class json_bool :public json_value {
-  bool val;
+  const bool val;
 public:
-  json_bool(bool x);
+  json_bool(const bool x);
   std::ostream& write(std::ostream& os) const;
 };
 

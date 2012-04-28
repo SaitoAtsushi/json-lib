@@ -34,7 +34,7 @@ parse::parse(istream &in)
 
 json_object* parse::object() {
   char ch;
-  json_object* obj=new json_object();
+  json_object::value_type* obj=new json_object::value_type;
   json_string* k;
   json_value* v;
 
@@ -46,32 +46,32 @@ json_object* parse::object() {
       while(isspace(ch=in.get()));
       if(ch!=':') throw json_exception();
       v=parse::value();
-      obj->insert(k, v);
+      obj->insert(json_object::value_type::value_type(k, v));
       while(isspace(ch=in.get()));
       if(ch==',') while(isspace(ch=in.get()));
       else if(ch=='}') break;
       else throw json_exception();
     }
   }
-  return obj;
+  return new json_object(obj);
 }
 
 json_array* parse::array() {
   char ch;
-  json_array* jarray=new json_array();
+  json_array::value_type* arr=new json_array::value_type();
 
   while(isspace(ch=in.get()));
   if(ch!=']') {
     in.unget();
     while(1) {
-      jarray->insert(parse::value());
+      arr->push_back(parse::value());
       while(isspace(ch=in.get()));
       if(ch==',');
       else if(ch==']') break;
       else throw json_exception();
     }
   }
-  return jarray;
+  return new json_array(arr);
 }
 
 int char_to_integer(char x) {
