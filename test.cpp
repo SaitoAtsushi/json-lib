@@ -7,5 +7,6 @@
 using namespace std;
 
 int main(void) {
-  cout<<parse(cin).value()<<endl;
+  parse parser(cin);
+  cout<<parser.start()<<endl;
 }

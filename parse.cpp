@@ -1,4 +1,5 @@
 
+#include <cstdio>
 #include <exception>
 #include <iostream>
 #include <typeinfo>
@@ -33,7 +34,7 @@ parse::parse(istream &in)
 }
 
 json_object* parse::object() {
-  char ch;
+  int ch;
   json_object::value_type* obj=new json_object::value_type;
   json_string* k;
   json_value* v;
@@ -57,7 +58,7 @@ json_object* parse::object() {
 }
 
 json_array* parse::array() {
-  char ch;
+  int ch;
   json_array::value_type* arr=new json_array::value_type();
 
   while(isspace(ch=in.get()));
@@ -84,7 +85,7 @@ int char_to_integer(char x) {
 
 json_string* parse::string() {
   std::string* x=new std::string;
-  char ch;
+  int ch;
   while((ch=in.get()), ch != '"') {
     if(ch == '\\') {
       ch=in.get();
@@ -117,7 +118,7 @@ json_string* parse::string() {
 }
 
 json_number* parse::number() {
-  char ch;
+  int ch;
   double n=0;
   
   ch=in.get();
@@ -127,7 +128,11 @@ json_number* parse::number() {
     in.unget();
     sign = 1;
   }
-  while(isdigit(ch=in.get())) n=n*10+(ch-'0');
+  if((ch=in.get()) == '0') n=0;
+  else {
+    in.unget();
+    while(isdigit(ch=in.get())) n=n*10+(ch-'0');
+  }
   if(ch=='.') {
     double d=0;
     for(double col=0.1; isdigit(ch=in.get()); col*=0.1) d+=(ch-'0')*col;
@@ -156,20 +161,17 @@ json_number* parse::number() {
 }
 
 json_value* parse::value() {
-  char ch;
+  int ch;
   json_value* return_value;
   
   while(isspace(ch=in.get()));
   if(ch == '{') {
     return_value = parse::object();
-  }
-  else if(ch == '[') {
+  } else if(ch == '[') {
     return_value = parse::array();
-  }
-  else if(ch == '"') {
+  } else if(ch == '"') {
     return_value = parse::string();
-  }
-  else if(ch == '-' || isdigit(ch)) {
+  } else if(ch == '-' || isdigit(ch)) {
     in.unget();
     return_value = parse::number();
   } else if(ch == 'n') {
@@ -177,14 +179,14 @@ json_value* parse::value() {
     if(in.get()!='l') throw json_exception();
     if(in.get()!='l') throw json_exception();
     if(isalnum(in.get())) throw json_exception();
-    else in.unget();
+    in.unget();
     return_value = new json_null();
   } else if(ch == 't') {
     if(in.get()!='r') throw json_exception();
     if(in.get()!='u') throw json_exception();
     if(in.get()!='e') throw json_exception();
     if(isalnum(in.get())) throw json_exception();
-    else in.unget();
+    in.unget();
     return_value = new json_bool(true);
   } else if(ch == 'f') {
     if(in.get()!='a') throw json_exception();
@@ -192,9 +194,20 @@ json_value* parse::value() {
     if(in.get()!='s') throw json_exception();
     if(in.get()!='e') throw json_exception();
     if(isalnum(in.get())) throw json_exception();
-    else in.unget();
+    in.unget();
     return_value = new json_bool(false);
   }
-  
+
   return return_value;
 }
+
+json_value* parse::start() {
+  json_value* return_value = parse::value();;
+
+  int ch;
+  while(isspace(ch=in.get()));
+  if(ch != EOF) throw json_exception();
+
+  return return_value;
+}
+

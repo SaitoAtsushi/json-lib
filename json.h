@@ -75,7 +75,8 @@ private:
   json_object* object();
   json_array*  array();
   json_number* number();
+  json_value* value();
 public:
   parse(std::istream &);
-  json_value* value();
+  json_value* start();
 };
