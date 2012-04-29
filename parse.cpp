@@ -172,6 +172,29 @@ json_value* parse::value() {
   else if(ch == '-' || isdigit(ch)) {
     in.unget();
     return_value = parse::number();
+  } else if(ch == 'n') {
+    if(in.get()!='u') throw json_exception();
+    if(in.get()!='l') throw json_exception();
+    if(in.get()!='l') throw json_exception();
+    if(isalnum(in.get())) throw json_exception();
+    else in.unget();
+    return_value = new json_null();
+  } else if(ch == 't') {
+    if(in.get()!='r') throw json_exception();
+    if(in.get()!='u') throw json_exception();
+    if(in.get()!='e') throw json_exception();
+    if(isalnum(in.get())) throw json_exception();
+    else in.unget();
+    return_value = new json_bool(true);
+  } else if(ch == 'f') {
+    if(in.get()!='a') throw json_exception();
+    if(in.get()!='l') throw json_exception();
+    if(in.get()!='s') throw json_exception();
+    if(in.get()!='e') throw json_exception();
+    if(isalnum(in.get())) throw json_exception();
+    else in.unget();
+    return_value = new json_bool(false);
   }
+  
   return return_value;
 }

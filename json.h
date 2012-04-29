@@ -55,6 +55,7 @@ public:
 };
 
 class json_null :public json_value {
+  std::ostream& write(std::ostream&) const;
 };
 
 class json_bool :public json_value {

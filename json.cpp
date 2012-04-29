@@ -127,3 +127,8 @@ ostream& json_number::write(ostream&os) const {
   os<<value;
   return os;
 }
+
+ostream& json_null::write(std::ostream& os) const {
+  os<<"null";
+  return os;
+}
