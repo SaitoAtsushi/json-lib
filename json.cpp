@@ -24,6 +24,10 @@ json_string::~json_string() {
   delete str;
 }
 
+json_string::operator const value_type&() const {
+  return *str;
+}
+
 ostream& json_string::write(ostream& os) const {
   os<<'"';
   for(string::const_iterator iter=str->begin(); iter!=str->end(); ++iter) {
@@ -57,6 +61,10 @@ json_array::~json_array() {
   delete arr;
 }
 
+json_array::operator const value_type&() const {
+  return *arr;
+}
+
 ostream& json_array::write(ostream& os) const {
   cout<<'[';
   for(value_type::const_iterator iter=arr->begin(); iter != arr->end();) {
@@ -79,6 +87,10 @@ json_object::~json_object() {
   delete obj;
 }
 
+json_object::operator const value_type&() const {
+  return *obj;
+}
+
 ostream& json_object::write(ostream& os) const {
   os<<'{';
   for(value_type::const_iterator iter=obj->begin(); iter!=obj->end();) {
@@ -97,8 +109,16 @@ ostream& json_bool::write(ostream& os) const {
   return os;
 }
 
+json_bool::operator bool() const {
+  return val;
+}
+
 json_number::json_number(const double number)
   : number(number) {
+}
+
+json_number::operator const double&() const {
+  return number;
 }
 
 ostream& json_number::write(ostream&os) const {
