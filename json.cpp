@@ -17,20 +17,21 @@ const type_info& json_value::type() {
 json_value::~json_value() {
 }
 
-json_string::json_string(string* x) : str(x) {
+json_string::json_string(string* x)
+  : value(x) {
 }
 
 json_string::~json_string() {
-  delete str;
+  delete value;
 }
 
 json_string::operator const value_type&() const {
-  return *str;
+  return *value;
 }
 
 ostream& json_string::write(ostream& os) const {
   os<<'"';
-  for(string::const_iterator iter=str->begin(); iter!=str->end(); ++iter) {
+  for(string::const_iterator iter=value->begin(); iter!=value->end(); ++iter) {
     switch(*iter) {
     case '"' : os<<"\\\""; break;
     case '\\': os<<"\\\\"; break;
@@ -47,81 +48,82 @@ ostream& json_string::write(ostream& os) const {
   return os;
 }
   
-std::ostream& operator<<(std::ostream& os, const json_value* value) {
-  return value->write(os);
+std::ostream& operator<<(std::ostream& os, const json_value* x) {
+  return x->write(os);
 }
   
-json_array::json_array(const value_type* arr)
-  : arr(arr) {
+json_array::json_array(const value_type* x)
+  : value(x) {
 }
 
 json_array::~json_array() {
-  for(value_type::const_iterator iter=arr->begin(); iter!=arr->end(); ++iter)
+  for(value_type::const_iterator iter=value->begin(); iter!=value->end(); ++iter)
     delete *iter;
-  delete arr;
+  delete value;
 }
 
 json_array::operator const value_type&() const {
-  return *arr;
+  return *value;
 }
 
 ostream& json_array::write(ostream& os) const {
   cout<<'[';
-  for(value_type::const_iterator iter=arr->begin(); iter != arr->end();) {
+  for(value_type::const_iterator iter=value->begin(); iter != value->end();) {
     (*iter)->write(os);
     ++iter;
-    if(iter!=arr->end()) os <<',';
+    if(iter!=value->end()) os <<',';
   }
   os<<']';
 }
 
-json_object::json_object(value_type* obj)
-  : obj(obj) {
+json_object::json_object(value_type* x)
+  : value(x) {
 }
 
 json_object::~json_object() {
-  for(value_type::const_iterator iter=obj->begin(); iter!=obj->end(); ++iter) {
+  for(value_type::const_iterator iter=value->begin(); iter!=value->end(); ++iter) {
     delete iter->first;
     delete iter->second;
   }
-  delete obj;
+  delete value;
 }
 
 json_object::operator const value_type&() const {
-  return *obj;
+  return *value;
 }
 
 ostream& json_object::write(ostream& os) const {
   os<<'{';
-  for(value_type::const_iterator iter=obj->begin(); iter!=obj->end();) {
+  for(value_type::const_iterator iter=value->begin(); iter!=value->end();) {
     os << iter->first <<':' << iter->second;
     ++iter;
-    if(iter!=obj->end()) os <<',';
+    if(iter!=value->end()) os <<',';
   }
   os<<'}';
 }
 
-json_bool::json_bool(const bool x) : val(x) {
+json_bool::json_bool(const bool x)
+  : value(x) {
 }
 
 ostream& json_bool::write(ostream& os) const {
-  os<< (val ? "true" : "false");
+  os<< (value ? "true" : "false");
   return os;
 }
 
 json_bool::operator bool() const {
-  return val;
+  return value;
 }
 
-json_number::json_number(const double number)
-  : number(number) {
+json_number::json_number(const double x)
+  : value(x) {
 }
 
 json_number::operator const double&() const {
-  return number;
+  return value;
 }
 
 ostream& json_number::write(ostream&os) const {
-  os<<number;
+  os<<value;
   return os;
 }
