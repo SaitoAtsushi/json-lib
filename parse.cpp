@@ -147,7 +147,7 @@ json_number* parse::number() {
       e+=ch-'0';
     }
     in.unget();
-    n *= pow(plus ? 10.0 : -0.1, e);
+    n *= pow(plus ? 10.0 : 0.1, e);
   } else {
     in.unget();
   }
