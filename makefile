@@ -1,17 +1,25 @@
 
 CXXFLAGS = -std=c++03
+EXT=.exe
+.PHONY : test clean
 
-all : sample.exe libjson.a
+all : libjson.a
 
-sample.exe : sample.o libjson.a
-	g++ sample.o -L./ -ljson -o $@ -s
+test : jsontest$(EXT)
+	./$< < testcase/case01.json
+	./$< < testcase/case02.json
+	./$< < testcase/case03.json
+	./$< < testcase/case04.json
+
+jsontest$(EXT) : test.o libjson.a
+	g++ test.o -L./ -ljson -o $@ -s
 
 libjson.a : json.o parse.o
 	ar ru libjson.a json.o parse.o
 
-sample.o : sample.cpp
+test.o : test.cpp
 json.o : json.cpp json.h
 parse.o : parse.cpp json.h
 
 clean :
-	rm -f *.o *.exe *.a
+	rm -f *.o *$(EXT) *.a *~

@@ -1,0 +1,9 @@
+{ "escape" :
+  ["\"quotation escape \"",
+   "revetse\\solidus escape",
+   "solidus escape\/", "\b backspace escape" ,
+   "formfeed \f escape",
+   "newline escape \n",
+   "carrige return \r ",
+   "horizonal tab \t"],
+  "hexdecimal digits": ["\u0046\u0047"]}
