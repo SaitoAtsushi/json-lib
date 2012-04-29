@@ -152,7 +152,7 @@ json_number* parse::number() {
     in.unget();
   }
 
-  return new json_number(n);
+  return new json_number(n*sign);
 }
 
 json_value* parse::value() {
